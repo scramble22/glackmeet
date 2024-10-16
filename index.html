@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обратный отсчёт</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to bottom, #89cff0, #4682b4);
+            color: #fff;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .countdown, .total, .sleep {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 2em;
+            font-weight: 600;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 1.2em;
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .countdown, .total, .sleep {
+                font-size: 1.5em;
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .countdown, .total, .sleep {
+                font-size: 1.2em;
+                padding: 8px 15px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .countdown, .total, .sleep {
+                font-size: 1em;
+                padding: 5px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Встреча голубков состоится через:</h1>
+
+    <div class="countdown" id="countdown"></div>
+    <div class="total" id="totalHours"></div>
+    <div class="total" id="totalMinutes"></div>
+    <div class="sleep" id="sleepHours"></div>
+
+    <footer>
+        глэк - это состояние души...
+    </footer>
+
+    <script>
+        // Функция для правильного склонения слов
+        function declension(number, one, two, five) {
+            number = Math.abs(number) % 100;
+            const lastDigit = number % 10;
+            if (number > 10 && number < 20) return five;
+            if (lastDigit > 1 && lastDigit < 5) return two;
+            if (lastDigit == 1) return one;
+            return five;
+        }
+
+        function updateCountdown() {
+            const now = new Date();
+            const targetDate = new Date('2028-08-19T00:00:00');
+
+            const diff = targetDate - now;
+
+            const years = targetDate.getFullYear() - now.getFullYear() - (now > new Date(`${targetDate.getFullYear()}-08-19`) ? 1 : 0);
+            const months = targetDate.getMonth() - now.getMonth() + (years * 12);
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24)) % 365;
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            const totalHours = Math.floor(diff / (1000 * 60 * 60));
+            const totalMinutes = Math.floor(diff / (1000 * 60));
+
+            const remainingNights = days;
+            const sleepAdjustedHours = totalHours - (remainingNights * 8);
+
+            // Склоняем слова
+            const yearsText = declension(years, "год", "года", "лет");
+            const daysText = declension(days, "день", "дня", "дней");
+            const hoursText = declension(hours, "час", "часа", "часов");
+            const minutesText = declension(minutes, "минута", "минуты", "минут");
+            const secondsText = declension(seconds, "секунда", "секунды", "секунд");
+
+            // Обновляем HTML с учётом правильных склонений
+            document.getElementById("countdown").innerHTML = `${years} ${yearsText}, ${days} ${daysText}, ${hours} ${hoursText}, ${minutes} ${minutesText}, ${seconds} ${secondsText}`;
+            document.getElementById("totalHours").innerHTML = `Всего часов: ${totalHours}`;
+            document.getElementById("totalMinutes").innerHTML = `Всего минут: ${totalMinutes}`;
+            document.getElementById("sleepHours").innerHTML = `Часов, исключая сон: ${sleepAdjustedHours}`;
+
+            setTimeout(updateCountdown, 1000);
+        }
+
+        updateCountdown();
+    </script>
+
+</body>
+</html>
